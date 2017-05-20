@@ -93,7 +93,7 @@ o With ShiftDivide mode:
 
 ## Usage
 
-for the ATMEL AVR/MCU's
+Example for the ATMEL AVR/MCU's
 ```
 #include <xtm1638.h>
 static xtm1638 ledandkey( PB0, PB1, PB2 );
@@ -101,7 +101,7 @@ ledandkey.setChars("Hello");
 
 ```
 
-for the others
+Example for the other Arduino's (compatible mode)
 ```
 #include <xtm1638.h>
 static xtm1638 ledandkey( 8, 9, 10 );
@@ -110,8 +110,9 @@ ledandkey.setChars("Hello");
 
 
 
-## Extended usage
+## Extended usage example
 ```
+ // On top of your sketch
 #include <xtm1638.h>
 
 #ifdef XTM_ARDUINO_COMPATIBLE  
@@ -126,22 +127,32 @@ ledandkey.setChars("Hello");
  #define PIN_REG_LEDKEY_STROBE  PB2
 #endif
 
-// Create the class object
-#ifdef XTM_ARDUINO_COMPATIBLE  
+.......
+void setup()
+{
+ // Create the class object
+ #ifdef XTM_ARDUINO_COMPATIBLE  
   // Specify (digital) PINS as described on the board
   static xtm1638 ledandkey( PIN_DIG_LEDKEY_DATAIO, 
                             PIN_DIG_LEDKEY_CLOCK, 
                             PIN_DIG_LEDKEY_STROBE 
                           );
-#else
+ #else
   // Specify register port PINS specified in the documentation of the board
   static xtm1638 ledandkey( PIN_REG_LEDKEY_DATAIO, 
                             PIN_REG_LEDKEY_CLOCK, 
                             PIN_REG_LEDKEY_STROBE 
                           );
-#endif
+ #endif
   
-ledandkey.setChars("Hello");
+ ledandkey.setChars("Hello");
+}
+
+void loop()
+{
+  // ......
+}
+
 ```
 
 
@@ -175,7 +186,7 @@ You are able to change the behaviour of the class by using the xtm1386.config.h 
 
 ## Port configuration
 
-When using the class with direct port access on ATMEL AVR/MCU, you need to specify register port names of the same register port. At default the register is port PORTB (XTM_PORTB). If you want to use another port register, you must change the port option available at the included xtm1386.config.h file.
+When using the class with direct port access on ATMEL AVR/MCU, you need to specify register port names of the same register port. At default the register port is **PORTB** *(XTM_PORTB)*. If you want to use another port register, you must change the port option available in the included xtm1386.config.h file.
 
 ```
 /* DEFINE A PORT TO USE (NOT REQUIRED WHEN COMPATIBLE MODE):
@@ -203,9 +214,9 @@ When using the class with direct port access on ATMEL AVR/MCU, you need to speci
 **NOTICE:** *When the class detects is not possible to use a configurated register port, it will switch to compatible mode!*
 
 
-## If you don't want to deal with port registers
+## If you don't want to deal with port registers at all
 
-You can completely switch off the use of port registers in the included xtm1386.config.h file:
+You can completely switch off the use of port registers in the included xtm1386.config.h file, however, you will not able to enjoy optimal performance.
 ```
 /* XTM_ARDUINO_COMPATIBLE:
  -------------------------
