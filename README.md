@@ -231,5 +231,53 @@ You can completely switch off the use of port registers in the included xtm1386.
 #define XTM_ARDUINO_COMPATIBLE
 ```
 
+## Notes and version history
+
+If you have questions or found some serious issues, please post your findings at the issues tab on this project. 
+
+### The why of this library
+This software is based upon the AVR-Only TM1638 "library" of IronCreek Software. Although the original library is suitable to use, it lacks some flexibility, compatibility and features.
+
+I have used the 'standard' [TM1638 library](https://github.com/rjbatista/tm1638-library) of Ricardo Batista, but isn't able to use direct port access. It is written for functionality but not for performance. Especially on low end devices or allot connected peripherals, this can be a serious issue. 
+
+This xtm1638 library can be classified as the best of both worlds, the performance of the improved IronCreek library with the portability of the Batista library. 
+
+```
+VERSION history:
+- Date: 20-may-2017 (v2.00)
+  Original IronCreek Software available here:
+  Source: https://github.com/int2str/TM1638
+  Topic : https://forum.arduino.cc/index.php?topic=190472.0
+
+IMPROVEMENTS V2.00 (by me)
+--------------------------
+  o Change layout of class and some names, macros and many other things;
+  o Optional constructor parameters, no need to change library;
+  o Adding many auto detection device/MCU defines;
+  o Compatible Arduino mode, however, register/port manipulation is faster but
+    only possible on AVR's (Atmel) boards/devices/MCU's. Still, because of this
+    compatible mode, it is possible to use the code on non AVR models such as
+    NodeMCU, ESP8266, etc;
+  o Adding display settings functionality;
+  o Adding orientation functionality (normal use or upsidedown use);
+  o Removing font method;
+  o Adding more font characters;
+  o Adding better devide methods (in namespace), overall performance improvement;
+  o It is small and lightweight but a little heavier compared to previous
+    version (approx +670 bytes) because of changes, improvements. Still much,
+    MUCH, smaller comparing to rjbatista tm1638-library and MUCH more less
+    MCU intensive;
+  o Adding library config file;
+  o Adding several (useful) examples with extended docu info;
+
+ v1.01
+   - Added divmod10_asm() (<---????? NOT there)
+   - Un-rolled send loop
+   - Switch to toggeling output ports
+
+  v1.00
+   - Initial release
+```
+
 
 
