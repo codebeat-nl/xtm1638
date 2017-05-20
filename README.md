@@ -1,4 +1,5 @@
-# Very fast library to control TM1638 chip (for example: "LED AND KEY") based modules, using (optional) direct port access on ATMEL MCU's.
+# Fastest library to control TM1638 chip (for example: "LED AND KEY") based modules, using (optional) direct port access on ATMEL MCU's.
+
 
 ## Category
 - Arduino C++
@@ -6,11 +7,14 @@
 - TM1638
 - LED and KEY
 
+
 ## About
 The TM1638 can be found in 8 digit, 7-segment LED displays which also incorporate 8 buttons as well as bi-colored red and green LEDs. This wrapper class library allows you to control the module with ease, using MCU's optimal direct port access on AVR's or in "Arduino library compatible mode" on any other 'Arduino'. Usage demo sketches included.
 
+
 ## Features
 - Significantly faster than existing implementations (see also benchmark results below)
+- Configurable ports and pins
 - Optimized arithmic operations
 - SuperB speed on ATMEL AVR by using direct port access
 - Auto detection when compiling for optimal configuration
@@ -20,6 +24,24 @@ The TM1638 can be found in 8 digit, 7-segment LED displays which also incorporat
 - Compiler configuration messages when compiling 
 - Configuration file included
 - Example, usage sketches/demo's included
+
+
+## Application usage cases
+- Counters and clocks which requires low latency
+- Gear control
+- Performing other time critical tasks on the same MCU
+- Use it on a low memory capacity MCU such as ATTiny85
+
+
+## How to install
+- Download zip
+- Unpack it in the libraries folder
+- Rename the folder to xtm1638
+- Restart IDE
+- Open example by using the example and search for xtml1638
+- Open tm1386Example01
+- Try to compile it (no errors = installed)
+
 
 ## Benchmarks
 
@@ -44,13 +66,48 @@ Mode:                         Score:       Minutes:           no-leds score:  no
 *) = default
 ```
 
+
+## Compile size
+
+Example tm1386example04.ino:
+```
+Compiled size on an Arduino Nano (ATMega328), this sketch with use of:
+
+Ricardo Batista TM1638 library    : size 4992b  462b mem
+----------------------------------
+This xtm1638 library,
+o With normal devide or multiply:
+  - Portmode (AVR only)           : size 2812b  104b mem  (AVR direct port manipulation (=much faster))
+  - Arduino compatible mode       : size 3104b  104b mem  (with digitalwrite etc)
+  - Arduino compatible mode  \     
+    without PROGMEM font table    : size 3098b  174b mem  
+ 
+o With ShiftDivide mode:
+  - Portmode (AVR only)           : size 3018b  116b mem  (AVR direct port manipulation (=much faster))
+  - Arduino compatible mode       : size 3310b  116b mem  (with digitalwrite etc)
+  - Arduino compatible mode  \     
+    without PROGMEM font table    : size 3304b  186b mem  
+
+```
+
+
 ## Usage
+
+for the ATMEL AVR/MCU's
 ```
 #include <xtm1638.h>
 static xtm1638 ledandkey( PB0, PB1, PB2 );
 ledandkey.setChars("Hello");
 
 ```
+
+for the others
+```
+#include <xtm1638.h>
+static xtm1638 ledandkey( 8, 9, 10 );
+ledandkey.setChars("Hello");
+```
+
 
 
 ## Extended usage
@@ -90,7 +147,7 @@ ledandkey.setChars("Hello");
 
 ## Compiler messages
 
-When compiling the code, the compiler shows some messages about current configuration. For example, when using port register on ATMEL AVR's, you will see something like this:
+When compiling the code, the compiler informs you about current applied configuration. For example, when using port register on ATMEL AVR's, you will see something like this:
 
 ```
 libraries/xtm1638/xtm1638.h:85:74: note: #pragma message: Compiling 1638 H file: Port manipulation mode - PORTB
@@ -104,6 +161,16 @@ libraries/xtm1638\xtm1638.h:123:75: note: #pragma message: Compiling 1638 H file
 
   #pragma message("Compiling 1638 H file: Arduino library compatible mode.")
 ```  
+
+
+## Config file
+
+You are able to change the behaviour of the class by using the xtm1386.config.h file. Change this file only when there are issues on:
+- Port settings
+- Auto detection features (failing)
+- Compatibility
+- Speed or global performance
+- Program versus dynamic memory usage
 
 
 ## Port configuration
@@ -132,11 +199,26 @@ When using the class with direct port access on ATMEL AVR/MCU, you need to speci
 //#define XTM_PORT XTM_PORTC
 //#define XTM_PORT XTM_PORTD
 
------------
-**NOTICE:** *When the class detects is not possible to use a register port, it switch to compatible mode!*
+```
+**NOTICE:** *When the class detects is not possible to use a configurated register port, it will switch to compatible mode!*
+
+
+## If you don't want to deal with port registers
+
+You can completely switch off the use of port registers in the included xtm1386.config.h file:
+```
+/* XTM_ARDUINO_COMPATIBLE:
+ -------------------------
+ By enabling this (uncomment it), you force the xtm1638 class to use Arduino
+ compatible mode always (disable auto detection), which means it performs the
+ same on any Andruino library supported board/processor. Enable this when there
+ are (detection) problems or for testing proposal/debugging.
+ Enabling this, also for ATMEL AVR's, can address a significantly instantly
+ drop in performance for any code compatible ATMEL device. If you want instant
+ performance for any ATMEL device, you better don't enable this.
+*/
+#define XTM_ARDUINO_COMPATIBLE
 ```
 
 
-### If you dont want to deal with port registers
 
-You can switch off the auto detection
