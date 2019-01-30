@@ -48,8 +48,16 @@ The TM1638 can be found in combination of 8 digit, 7-segment LED displays which 
 - Rename the folder to xtm1638
 - Restart IDE
 - Open example by using the example and search for xtml1638
-- Open tm1386Example01
+- Open tm1638Example01
 - Try to compile it (no errors = installed)
+
+
+## Included examples
+- tm1638Example01.ino - Hello world example
+- tm1638Example02.ino - Clock example with hours, minutes, seconds and user interface
+- tm1638Example03.ino - Characterset, gauge functionality (bars and indicators), orientation change
+- tm1638Example04.ino - Dedicated to benchmarks (see benchmarks below)
+- tm1638Example05.ino - Gauge, battery indicator, animation, orientation change
 
 
 ## Benchmarks
