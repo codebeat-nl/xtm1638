@@ -92,7 +92,7 @@
  You can download the FastGPIO library from here:
  - https://github.com/pololu/fastgpio-arduino
 */
-//#define XTM_AVR_ASM_MODE
+#define XTM_AVR_ASM_MODE
 
 #ifdef XTM_AVR_ASM_MODE
  #define XTM_AVR_ASM_PIN_DATAIO 8
