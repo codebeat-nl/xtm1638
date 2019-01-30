@@ -1,5 +1,5 @@
-# Fastest library to control TM1638 chip (for example: "LED AND KEY") based modules, using (optional) direct port access on ATMEL MCU's.
-
+# Fastest library to control TM1638 chip (for example: "LED AND KEY") based modules
+## updated 30-jan-2019
 
 ## Category
 - Arduino C++
@@ -9,27 +9,36 @@
 
 
 ## About
-The TM1638 can be found in 8 digit, 7-segment LED displays which also incorporate 8 buttons as well as bi-colored red and green LEDs. This wrapper class library allows you to control the module with ease, using MCU's optimal direct port access on AVR's or in "Arduino library compatible mode" on any other 'Arduino'. Usage demo sketches included.
+The TM1638 can be found in combination of 8 digit, 7-segment LED displays which also incorporate 8 buttons as well as bi-colored red and green LEDs. This library allows you to control the module with ease, using MCU's optimal direct port access on AVR's or in "Arduino library compatible mode" on any other 'Arduino'. Usage demo sketches included.
 
 
 ## Features
 - Significantly faster than existing implementations (see also benchmark results below)
+- Low latency
 - Configurable ports and pins
-- Optimized arithmic operations
-- SuperB speed on ATMEL AVR by using direct port access
+- Optimized arithmic operations (ASM for AVR), shiftdivide for C++
+- SuperB speed on ATMEL/MicroChip AVR by using direct port access and assembler
+- Optional 8 byte segment cache
+- FastGPIO compatibility (see also xtm1638.config.h)
 - Auto detection when compiling for optimal configuration
-- Arduino library compatible mode (use it on any 'Arduino')
+- Cool gauge feature, gauge functionality to be able to display bars, (battery) status, VU-meter, etc
+- Runs on any Arduino with auto compatible mode
 - Easy to use class methods
-- Light weight, small memory footprint
+- Light weight, small memory footprint (can vary by used compile settings, Arduino IDE and library)
 - Compiler configuration messages when compiling 
-- Configuration file included
-- Example, usage sketches/demo's included
+- Configuration file included (no need to change class files)
+- 5 Examples, usage sketches/demo's included
 
 
 ## Application usage cases
-- Counters and clocks which requires low latency
-- Gear control
-- Performing other time critical tasks on the same MCU
+- Counters which requires low latency, for example gear control
+- Clocks
+- Battery equipment - indicator 
+- Amplifiers, general display and/or VU-meter indicator
+
+
+## Benefits
+- Ideal to performing other time critical tasks on the same MCU
 - Use it on a low memory capacity MCU such as ATTiny85
 
 
@@ -51,19 +60,46 @@ Running sketch: tm1386example04.ino (included stress test example)
 Device/MCU    : Arduino Nano/ATMega328 
                 [Link](http://www.atmel.com/images/Atmel-8271-8-bit-AVR-Microcontroller-ATmega48A-48PA-88A-88PA-168A-168PA-328-328P_datasheet_Complete.pdf)
 ----------------------------------------------------------------------
-Mode:                         Score:       Minutes:           no-leds score:  no-leds minutes:
- Ricardo Batista TM1638 lib    448676ms     7.48 minutes(!)    363178ms        6.05 minutes(!)       
+ Mode:                         Score:       Minutes:           no-leds score:  no-leds minutes:
+    Register+Multiply             94177ms      1.57 minutes        72077ms        1.20 minutes
+    Register+Divide               86952ms      1.44 minutes        64852ms        1.08 minutes
+    Register+ShiftDivide          76404ms      1.2734 minutes      58314ms        0.972 minutes(!)
+    Register+ShiftDivide-PROGMEM  76374ms      1.2729 minutes      58283ms        0.971 minutes(!)
+    Compatible Mode+Multiply      321876ms     5.36 minutes       232628ms        3.88 minutes
+    Compatible Mode+Divide        314652ms     5.25 minutes       226404ms        3.77 minutes
+    Compatible Mode+ShiftDivide   304093ms     5.07 minutes       219866ms        3.66 minutes
 
----------- this xtm1638 library:
- Register+Multiply             94177ms      1.57 minutes        72077ms        1.20 minutes
- Register+Divide               86952ms      1.44 minutes        64852ms        1.08 minutes
- Register+ShiftDivide*         76404ms      1.2734 minutes      58314ms        0.972 minutes(!)
- Register+ShiftDivide-PROGMEM  76374ms      1.2729 minutes      58283ms        0.971 minutes(!)
- Compatible Mode+Multiply      321876ms     5.36 minute        232628ms        3.88 minutes
- Compatible Mode+Divide        314652ms     5.25 minutes       226404ms        3.77 minutes
- Compatible Mode+ShiftDivide   304093ms     5.07 minutes       219866ms        3.66 minutes
+	----
+	
+   26 jan 2019 update: New records with caching (buffering)!
+    Register+ShiftDivide+caching   39435ms     0.65725 minutes     22512ms        0.375 minutes(!) - speed gain: 1.9x/2.5x
+    Compatible Mode+ShiftDivide+  142392ms     2.3732  minutes     59284ms        0.988 minutes(!) - speed gain: 2.1x/3.7x 
+    caching                        
+	
+   29 jan 2019 update (1): New records by using assembler (ASM)!
+	  ASM+ShiftDivide                37125ms     0.618 minutes(!)    30239ms        0.504 minutes(!) - speed gain: 2.1x/1.9x
+	  ASM+ShiftDivide+caching        23889ms     0.398 minutes(!)    17004ms        0.283 minutes(!) - speed gain: 3.1x/3.4x
 
-*) = default
+   29 jan 2019 update (2): New records by using assembler (ASM) + font-table in dynamic memory!    
+	  ASM+ShiftDivide                37095ms     0.617 minutes(!)    30209ms        0.503 minutes(!) - speed gain: 2.1x/1.9x
+	  ASM+ShiftDivide+caching        23860ms     0.397 minutes(!)    16974ms        0.282 minutes(!) - speed gain: 3.2x/3.5x
+	 
+	
+   30 jan 2019:
+    Another gain can be reached by using new define (which is default now), XTM_AVR_SHIFTWISE_DIVIDE_ASM.
+	  I don't have the time right now to update the tables above again. Fastest speed is now 12756ms = 
+	  0.213 minutes = 12.756 seconds to count up to 100000 and display it. To reach this, use fastest 
+    config settings specified below.  	
+   
+	----
+   
+   FASTEST CONFIG (highest mem usage)     AVERAGE CONFIG (fast)            SLOWEST CONFIG (very slow compared to all others)
+    # XTM_AVR_ASM_MODE					          # XTM_APPLY_CACHED_SEGMENTS      # XTM_ARDUINO_COMPATIBLE
+	  # XTM_APPLY_CACHED_SEGMENTS			      # XTM_SHIFTWISE_DIVIDE           # XTM_ARITHMETIC_MULTIPLY
+	  # XTM_NOPROGMEM
+	  # XTM_SHIFTWISE_DIVIDE
+    # XTM_AVR_SHIFTWISE_DIVIDE_ASM
+	
 ```
 
 
@@ -71,6 +107,8 @@ Mode:                         Score:       Minutes:           no-leds score:  no
 
 Example tm1386example04.ino:
 ```
+NOTICE: Results can vary by used MCU-type, compile settings, Arduino IDE and library
+
 Compiled size on an Arduino Nano (ATMega328), this sketch with use of:
 
 Ricardo Batista TM1638 library    : size 4992b  462b mem
@@ -88,6 +126,9 @@ o With ShiftDivide mode:
   - Arduino compatible mode  \     
     without PROGMEM font table    : size 3304b  186b mem  
 
+30 jan 2019:
+	Since there a few major changes, this table needs an update however I don't have the time right now to 
+  update the tables above again. At least it compiles about 1K smaller than Batista's library.
 ```
 
 
@@ -117,40 +158,45 @@ ledandkey.setChars("Hello");
 
 #ifdef XTM_ARDUINO_COMPATIBLE  
  // Specify (digital) PINS as described on the board
- #define PIN_DIG_LEDKEY_DATAIO  8
- #define PIN_DIG_LEDKEY_CLOCK   9
- #define PIN_DIG_LEDKEY_STROBE  10
+ #define PIN_LEDKEY_DATAIO  8
+ #define PIN_LEDKEY_CLOCK   9
+ #define PIN_LEDKEY_STROBE  10
 #else 
   // Specify register port PINS specified in the documentation of the board
- #define PIN_REG_LEDKEY_DATAIO  PB0
- #define PIN_REG_LEDKEY_CLOCK   PB1
- #define PIN_REG_LEDKEY_STROBE  PB2
+ #define PIN_LEDKEY_DATAIO  PB0
+ #define PIN_LEDKEY_CLOCK   PB1
+ #define PIN_LEDKEY_STROBE  PB2
 #endif
+
+// Create the class object
+static xtm1638 ledandkey( PIN_LEDKEY_DATAIO, 
+                          PIN_LEDKEY_CLOCK, 
+                          PIN_LEDKEY_STROBE 
+                          );
 
 .......
 void setup()
 {
- // Create the class object
- #ifdef XTM_ARDUINO_COMPATIBLE  
-  // Specify (digital) PINS as described on the board
-  static xtm1638 ledandkey( PIN_DIG_LEDKEY_DATAIO, 
-                            PIN_DIG_LEDKEY_CLOCK, 
-                            PIN_DIG_LEDKEY_STROBE 
-                          );
- #else
-  // Specify register port PINS specified in the documentation of the board
-  static xtm1638 ledandkey( PIN_REG_LEDKEY_DATAIO, 
-                            PIN_REG_LEDKEY_CLOCK, 
-                            PIN_REG_LEDKEY_STROBE 
-                          );
- #endif
-  
  ledandkey.setChars("Hello");
+ delay(2000);
 }
 
 void loop()
 {
-  // ......
+ ledandkey.setChars("Input?");
+  
+  // Be gentle
+  delay(300);
+  
+  if( ledandkey.getButtonPressed() == XTM_BUTTON1 )
+  {
+    ledandkey.setChars("Hello");
+    delay(2000);
+    ledandkey.setChars("Again");
+    delay(2000);
+  }
+
+  ...... etc
 }
 
 ```
@@ -158,19 +204,17 @@ void loop()
 
 ## Compiler messages
 
-When compiling the code, the compiler informs you about current applied configuration. For example, when using port register on ATMEL AVR's, you will see something like this:
+When compiling the code, the compiler informs you about current applied configuration. For example, when using port register on AVR's, you will see something like this:
 
 ```
 libraries/xtm1638/xtm1638.h:85:74: note: #pragma message: Compiling 1638 H file: Port manipulation mode - PORTB
 
-   *#pragma message("Compiling 1638 H file: Port manipulation mode - PORTB")*
 ```
 However, when compiling in compatible mode, you will see something like this:
 
 ```
 libraries/xtm1638\xtm1638.h:123:75: note: #pragma message: Compiling 1638 H file: Arduino library compatible mode.
 
-  #pragma message("Compiling 1638 H file: Arduino library compatible mode.")
 ```  
 
 
@@ -243,14 +287,41 @@ I have used the 'standard' [TM1638 library](https://github.com/rjbatista/tm1638-
 This xtm1638 library can be classified as the best of both worlds, the performance of the improved IronCreek library with the portability of the Batista library. 
 
 ```
-VERSION history:
-- Date: 20-may-2017 (v2.00)
-  Original IronCreek Software available here:
-  Source: https://github.com/int2str/TM1638
-  Topic : https://forum.arduino.cc/index.php?topic=190472.0
-
-IMPROVEMENTS V2.00 (by me)
---------------------------
+  VERSION history:
+  - Date	: 20-may-2017 (v2.00)
+    updated : 31-dec-2018 (v2.01)
+    updated : 30-jan-2019 (v2.02)
+	
+	Original by IronCreek Software, available here:
+      Source: https://github.com/int2str/TM1638
+      Topic : https://forum.arduino.cc/index.php?topic=190472.0
+ 
+  v2.02
+   - Added caching method for segments, SUPERB performance! Compatible mode
+     has been also improved because of this. See also XTM_APPLY_CACHED_SEGMENTS in 
+	 changed xtm1638.config.h file;
+   - Added more optimizations in assembler for AVR, see also 
+     XTM_AVR_SHIFTWISE_DIVIDE_ASM in changed xtm1638.config.h file;
+   - Added FastGPIO support for AVR, requires third-party library by Pololu 
+     Corporation, see also XTM_AVR_ASM_MODE in changed xtm1638.config.h file;   
+   - Add new constructor without parameters that use defaults specified in
+     xtm1638.config.h file; 
+   - Fix compatibility issue with ARM MCU's; 
+   - Removed ARDUINO <= 100 IDE support, sorry, time to upgrade;
+   - Fix position and layout problems with XTM_GAUGE_STYLE_PIPE style parameter 
+     at gauge function. Most of code rewritten;
+   - Added a new gauge style XTM_GAUGE_STYLE_CENTER_LINE;
+   - Updated stats however not all latest performance updates;
+   - Added extra example, no 5.
+   
+  v2.01
+   - Added setSignedNumber() function;
+   - Fix non display of null/zero (0) value in number functions;
+   - Changed 2 characters, i and +.
+    
+ 
+  V2.00 (v1.01 IMPROVEMENTS by codebeat)
+  ---------------------------------
   o Change layout of class and some names, macros and many other things;
   o Optional constructor parameters, no need to change library;
   o Adding many auto detection device/MCU defines;
@@ -259,19 +330,20 @@ IMPROVEMENTS V2.00 (by me)
     compatible mode, it is possible to use the code on non AVR models such as
     NodeMCU, ESP8266, etc;
   o Adding display settings functionality;
-  o Adding orientation functionality (normal use or upsidedown use);
-  o Removing font method;
+  o Adding orientation functionality (normal use or upside down use);
+  o Replaced font method;
   o Adding more font characters;
-  o Adding better devide methods (in namespace), overall performance improvement;
-  o It is small and lightweight but a little heavier compared to previous
+  o Adding better divide/math methods (in namespace), overall performance improvement;
+  o It is small and lightweight but a little heavier in size compared to previous
     version (approx +670 bytes) because of changes, improvements. Still much,
     MUCH, smaller comparing to rjbatista tm1638-library and MUCH more less
     MCU intensive;
+  o Adding gauge functionality to be able to display bars, (battery) status etc;
   o Adding library config file;
   o Adding several (useful) examples with extended docu info;
 
- v1.01
-   - Added divmod10_asm() (<---????? NOT there)
+  v1.01
+   - Added divmod10_asm() (<---????? NOT there!)
    - Un-rolled send loop
    - Switch to toggeling output ports
 
