@@ -67,7 +67,7 @@ The TM1638 can be found in combination of 8 digit, 7-segment LED displays which 
 - xtm1638Example05.ino - Gauge, battery indicator, animation, orientation change
 .
 ## Gauge examples
-You can use the class it's gauge() function to display bars as indicators. Gauges can represent a single value or two values (balanced). There are 5 different types, each gauge type has 3 modes, normal, center or inbound.
+You can use the class it's gauge() function to display bars as indicators. Gauges can represent a single value or two values (balanced). There are 5 different types, each gauge type has 3 modes, normal, center or inbound. Values can be 0..100% (for each 'channel').
 
 ![Gauge examples](https://raw.githubusercontent.com/codebeat-nl/xtm1638/master/xtm1638_gauge_modes-16.png)
 
@@ -98,19 +98,18 @@ Device/MCU    : Arduino Nano/ATMega328
     caching                        
 	
    29 jan 2019 update (1): New records by using assembler (ASM)!
-	  ASM+ShiftDivide                37125ms     0.618 minutes(!)    30239ms        0.504 minutes(!) - speed gain: 2.1x/1.9x
-	  ASM+ShiftDivide+caching        23889ms     0.398 minutes(!)    17004ms        0.283 minutes(!) - speed gain: 3.1x/3.4x
+    ASM+ShiftDivide                37125ms     0.618 minutes(!)    30239ms        0.504 minutes(!) - speed gain: 2.1x/1.9x
+    ASM+ShiftDivide+caching        23889ms     0.398 minutes(!)    17004ms        0.283 minutes(!) - speed gain: 3.1x/3.4x
 
    29 jan 2019 update (2): New records by using assembler (ASM) + font-table in dynamic memory!    
-	  ASM+ShiftDivide                37095ms     0.617 minutes(!)    30209ms        0.503 minutes(!) - speed gain: 2.1x/1.9x
-	  ASM+ShiftDivide+caching        23860ms     0.397 minutes(!)    16974ms        0.282 minutes(!) - speed gain: 3.2x/3.5x
+    ASM+ShiftDivide                37095ms     0.617 minutes(!)    30209ms        0.503 minutes(!) - speed gain: 2.1x/1.9x
+    ASM+ShiftDivide+caching        23860ms     0.397 minutes(!)    16974ms        0.282 minutes(!) - speed gain: 3.2x/3.5x
 	 
 	
    30 jan 2019:
     Another gain can be reached by using new define (which is default now), XTM_AVR_SHIFTWISE_DIVIDE_ASM.
-	  I don't have the time right now to update the tables above again. Fastest speed is now 12756ms = 
-	  0.213 minutes = 12.756 seconds to count up to 100000 and display it. To reach this, use fastest 
-    config settings specified below.  	
+    At this moment I don't have the time to update the tables above again. Fastest speed is 12756ms = 
+    0.213 minutes = 12.756 seconds to count up to 100000 and display it. To achieve this, use fastest 
    
 	----
    
@@ -155,7 +154,7 @@ update the tables above again. At least it compiles about 1K smaller than Batist
 
 ## Usage
 
-Example for the ATMEL AVR/MCU's
+Example for AVR's
 ```
 #include <xtm1638.h>
 static xtm1638 ledandkey( PB0, PB1, PB2 );
