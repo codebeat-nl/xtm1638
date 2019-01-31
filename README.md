@@ -111,10 +111,10 @@ Device/MCU    : Arduino Nano/ATMega328
 	----
    
    FASTEST CONFIG (highest mem usage)     AVERAGE CONFIG (fast)            SLOWEST CONFIG (very slow compared to all others)
-    # XTM_AVR_ASM_MODE					          # XTM_APPLY_CACHED_SEGMENTS      # XTM_ARDUINO_COMPATIBLE
-	  # XTM_APPLY_CACHED_SEGMENTS			      # XTM_SHIFTWISE_DIVIDE           # XTM_ARITHMETIC_MULTIPLY
-	  # XTM_NOPROGMEM
-	  # XTM_SHIFTWISE_DIVIDE
+    # XTM_AVR_ASM_MODE                     # XTM_APPLY_CACHED_SEGMENTS      # XTM_ARDUINO_COMPATIBLE
+    # XTM_APPLY_CACHED_SEGMENTS            # XTM_SHIFTWISE_DIVIDE           # XTM_ARITHMETIC_MULTIPLY
+    # XTM_NOPROGMEM
+    # XTM_SHIFTWISE_DIVIDE
     # XTM_AVR_SHIFTWISE_DIVIDE_ASM
 	
 ```
@@ -144,8 +144,8 @@ o With ShiftDivide mode:
     without PROGMEM font table    : size 3304b  186b mem  
 
 30 jan 2019:
-	Since there a few major changes, this table needs an update however I don't have the time right now to 
-  update the tables above again. At least it compiles about 1K smaller than Batista's library.
+Since there a few major changes, this table needs an update however I don't have the time right now to 
+update the tables above again. At least it compiles about 1K smaller than Batista's library.
 ```
 
 
