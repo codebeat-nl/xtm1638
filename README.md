@@ -11,6 +11,7 @@
 ## About
 The TM1638 can be found in combination of 8 digit, 7-segment LED displays which also incorporate 8 buttons as well as bi-colored red and green LEDs. This library allows you to control the module with ease, using MCU's optimal direct port access on AVR's or in "Arduino library compatible mode" on any other 'Arduino'. Usage demo sketches included.
 
+![Example Led and Key Module](https://raw.githubusercontent.com/codebeat-nl/xtm1638/master/ledandkey-256.png)
 
 ## Features
 - Significantly faster than existing implementations (see also benchmark results below)
@@ -35,6 +36,8 @@ The TM1638 can be found in combination of 8 digit, 7-segment LED displays which 
 - Clocks
 - Battery equipment - indicator 
 - Amplifiers, general display and/or VU-meter indicator
+- Power supplies
+- Measurement tools
 
 
 ## Benefits
@@ -58,6 +61,10 @@ The TM1638 can be found in combination of 8 digit, 7-segment LED displays which 
 - tm1638Example03.ino - Characterset, gauge functionality (bars and indicators), orientation change
 - tm1638Example04.ino - Dedicated to benchmarks (see benchmarks below)
 - tm1638Example05.ino - Gauge, battery indicator, animation, orientation change
+
+## Gauge examples
+![Gauge examples](https://raw.githubusercontent.com/codebeat-nl/xtm1638/master/xtm1638_gauge_modes-16.png)
+
 
 
 ## Benchmarks
