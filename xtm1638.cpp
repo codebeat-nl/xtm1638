@@ -31,18 +31,18 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   VERSION history:
-  - Date	: 20-may-2017 (v2.00)
+  - Date   : 20-may-2017 (v2.00)
     updated : 31-dec-2018 (v2.01)
     updated : 30-jan-2019 (v2.02)
-	
-	Original by IronCreek Software, available here:
+   
+   Original by IronCreek Software, available here:
       Source: https://github.com/int2str/TM1638
       Topic : https://forum.arduino.cc/index.php?topic=190472.0
  
   v2.02
    - Added caching method for segments, SUPERB performance! Compatible mode
      has been also improved because of this. See also XTM_APPLY_CACHED_SEGMENTS in 
-	 changed xtm1638.config.h file;
+    changed xtm1638.config.h file;
    - Added more optimizations in assembler for AVR, see also 
      XTM_AVR_SHIFTWISE_DIVIDE_ASM in changed xtm1638.config.h file;
    - Added FastGPIO support for AVR, requires third-party library by Pololu 
@@ -119,7 +119,7 @@
   - http://blog.codebeat.nl            ; Blog website (projects and more)
   - http://youtube.codebeat.nl         ; YouTube channel (shortcut)
   - http://patreon.codebeat.nl         ; Patreon support channel (shortcut)   
-  - http://github.codebeat.nl     	   ; Github (projects)
+  - http://github.codebeat.nl           ; Github (projects)
   
   Thank you for supporting if you do!
 
@@ -137,155 +137,155 @@ namespace
     uint32_t ___q;
 
     #if defined(__AVR__) && defined(XTM_AVR_SHIFTWISE_DIVIDE_ASM)
-	uint8_t ___x;
-	
+   uint8_t ___x;
+   
     //void divmod10(uint32_t in, uint32_t &div, uint8_t &mod) __attribute__((noinline));
-	void _avrdivmod10(uint32_t in, uint32_t &div, uint8_t &mod) //__attribute__((noinline))
-	{
-		//assumes that div/mod pointers arrive in r18:r19 and r20:r21 pairs (doesn't matter which way around)
-		//and that in arrives in r22:r25 quad
-		asm volatile(
-		"movw r30, %2   \n\t"  //uint32_t* divPtr = &div;
-		"movw r26, %1    \n\t" //uint32_t* modPtr = &mod;
+   void _avrdivmod10(uint32_t in, uint32_t &div, uint8_t &mod) //__attribute__((noinline))
+   {
+      //assumes that div/mod pointers arrive in r18:r19 and r20:r21 pairs (doesn't matter which way around)
+      //and that in arrives in r22:r25 quad
+      asm volatile(
+      "movw r30, %2   \n\t"  //uint32_t* divPtr = &div;
+      "movw r26, %1    \n\t" //uint32_t* modPtr = &mod;
    
-		"mov   r0, %A0  \n\t"  //byte temp = in
-		"movw r18, %A0  \n\t"  //uint32_t q = in;
-		"movw r20, %C0  \n\t"  
-		"ori  r18, 0x01 \n\t"  //q |= 1;
+      "mov   r0, %A0  \n\t"  //byte temp = in
+      "movw r18, %A0  \n\t"  //uint32_t q = in;
+      "movw r20, %C0  \n\t"  
+      "ori  r18, 0x01 \n\t"  //q |= 1;
    
-		"lsr  r25       \n\t"  //x = in >> 2 //note: x reuses registers of 'in', as 'in' was backed up in r0
-		"ror  r24       \n\t"
-		"ror  r23       \n\t"
-		"ror  r22       \n\t"
-		"lsr  r25       \n\t"  
-		"ror  r24       \n\t"
-		"ror  r23       \n\t"
-		"ror  r22       \n\t"
+      "lsr  r25       \n\t"  //x = in >> 2 //note: x reuses registers of 'in', as 'in' was backed up in r0
+      "ror  r24       \n\t"
+      "ror  r23       \n\t"
+      "ror  r22       \n\t"
+      "lsr  r25       \n\t"  
+      "ror  r24       \n\t"
+      "ror  r23       \n\t"
+      "ror  r22       \n\t"
    
-		"sub  r18, r22  \n\t" //q = q - x;
-		"sbc  r19, r23  \n\t"
-		"sbc  r20, r24  \n\t"
-		"sbc  r21, r25  \n\t"
+      "sub  r18, r22  \n\t" //q = q - x;
+      "sbc  r19, r23  \n\t"
+      "sbc  r20, r24  \n\t"
+      "sbc  r21, r25  \n\t"
    
-		"movw r22, r18  \n\t" //x = q;
-		"movw r24, r20  \n\t"
-		"lsr  r25       \n\t" //x = x >> 4;
-		"ror  r24       \n\t"
-		"ror  r23       \n\t"
-		"ror  r22       \n\t"
-		"lsr  r25       \n\t"
-		"ror  r24       \n\t"
-		"ror  r23       \n\t"
-		"ror  r22       \n\t"
-		"lsr  r25       \n\t"
-		"ror  r24       \n\t"
-		"ror  r23       \n\t"
-		"ror  r22       \n\t"
-		"lsr  r25       \n\t"
-		"ror  r24       \n\t"
-		"ror  r23       \n\t"
-		"ror  r22       \n\t"
+      "movw r22, r18  \n\t" //x = q;
+      "movw r24, r20  \n\t"
+      "lsr  r25       \n\t" //x = x >> 4;
+      "ror  r24       \n\t"
+      "ror  r23       \n\t"
+      "ror  r22       \n\t"
+      "lsr  r25       \n\t"
+      "ror  r24       \n\t"
+      "ror  r23       \n\t"
+      "ror  r22       \n\t"
+      "lsr  r25       \n\t"
+      "ror  r24       \n\t"
+      "ror  r23       \n\t"
+      "ror  r22       \n\t"
+      "lsr  r25       \n\t"
+      "ror  r24       \n\t"
+      "ror  r23       \n\t"
+      "ror  r22       \n\t"
    
-		"add  r22, r18  \n\t" //x = x + q
-		"adc  r23, r19  \n\t"
-		"adc  r24, r20  \n\t"
-		"adc  r25, r21  \n\t"
+      "add  r22, r18  \n\t" //x = x + q
+      "adc  r23, r19  \n\t"
+      "adc  r24, r20  \n\t"
+      "adc  r25, r21  \n\t"
    
-		"movw r18, r22  \n\t" //q = x
-		"movw r20, r24  \n\t"
-		"add  r18, r23  \n\t" //q = q + (x >> 8)
-		"adc  r19, r24  \n\t"
-		"adc  r20, r25  \n\t"
-		"adc  r21, r1   \n\t"
+      "movw r18, r22  \n\t" //q = x
+      "movw r20, r24  \n\t"
+      "add  r18, r23  \n\t" //q = q + (x >> 8)
+      "adc  r19, r24  \n\t"
+      "adc  r20, r25  \n\t"
+      "adc  r21, r1   \n\t"
 
-		"movw r18, r20  \n\t" //q = q >> 16
-		"eor  r20, r20  \n\t"
-		"eor  r21, r21  \n\t"
-		"add  r18, r23  \n\t" //q = q + (x>>8)
-		"adc  r19, r24  \n\t"
-		"adc  r20, r25  \n\t"
-		"adc  r21, r1   \n\t" //NOTE: r1 is a known 0.
-		"add  r18, r22  \n\t" //q = q + x
-		"adc  r19, r23  \n\t"
-		"adc  r20, r24  \n\t"
-		"adc  r21, r25  \n\t"
+      "movw r18, r20  \n\t" //q = q >> 16
+      "eor  r20, r20  \n\t"
+      "eor  r21, r21  \n\t"
+      "add  r18, r23  \n\t" //q = q + (x>>8)
+      "adc  r19, r24  \n\t"
+      "adc  r20, r25  \n\t"
+      "adc  r21, r1   \n\t" //NOTE: r1 is a known 0.
+      "add  r18, r22  \n\t" //q = q + x
+      "adc  r19, r23  \n\t"
+      "adc  r20, r24  \n\t"
+      "adc  r21, r25  \n\t"
    
-		"mov  r18, r19  \n\t" //q = q >> 8
-		"mov  r19, r20  \n\t"
-		"mov  r20, r21  \n\t"
-		"eor  r21, r21  \n\t"
-		"add  r18, r22  \n\t" //q = q + x
-		"adc  r19, r23  \n\t"
-		"adc  r20, r24  \n\t"
-		"adc  r21, r25  \n\t"
+      "mov  r18, r19  \n\t" //q = q >> 8
+      "mov  r19, r20  \n\t"
+      "mov  r20, r21  \n\t"
+      "eor  r21, r21  \n\t"
+      "add  r18, r22  \n\t" //q = q + x
+      "adc  r19, r23  \n\t"
+      "adc  r20, r24  \n\t"
+      "adc  r21, r25  \n\t"
    
-		"andi r18, 0xF8 \n\t" //q = q & ~0x7
+      "andi r18, 0xF8 \n\t" //q = q & ~0x7
    
-		"sub   r0, r18  \n\t" //in = in - q
+      "sub   r0, r18  \n\t" //in = in - q
    
-		"lsr  r21       \n\t" //q = q >> 2
-		"ror  r20       \n\t"
-		"ror  r19       \n\t"
-		"ror  r18       \n\t"
-		"lsr  r21       \n\t"
-		"ror  r20       \n\t"
-		"ror  r19       \n\t"
-		"ror  r18       \n\t"
+      "lsr  r21       \n\t" //q = q >> 2
+      "ror  r20       \n\t"
+      "ror  r19       \n\t"
+      "ror  r18       \n\t"
+      "lsr  r21       \n\t"
+      "ror  r20       \n\t"
+      "ror  r19       \n\t"
+      "ror  r18       \n\t"
    
-		"sub  r0, r18   \n\t" //in = in - q
-		"st    X, r0    \n\t" //mod = in;
+      "sub  r0, r18   \n\t" //in = in - q
+      "st    X, r0    \n\t" //mod = in;
    
-		"lsr  r21       \n\t" //q = q >> 1
-		"ror  r20       \n\t"
-		"ror  r19       \n\t"
-		"ror  r18       \n\t"
+      "lsr  r21       \n\t" //q = q >> 1
+      "ror  r20       \n\t"
+      "ror  r19       \n\t"
+      "ror  r18       \n\t"
    
-		"st	   Z, r18  \n\t" //div = q
-		"std  Z+1, r19  \n\t"
-		"std  Z+2, r20  \n\t"
-		"std  Z+3, r21  \n\t"
+      "st      Z, r18  \n\t" //div = q
+      "std  Z+1, r19  \n\t"
+      "std  Z+2, r20  \n\t"
+      "std  Z+3, r21  \n\t"
    
-		:
-		: "r" (in), "r" (&mod), "r" (&div)
-		: "r0", "r26", "r27", "r31", "r31"
-		);
-	}	
-	
-	
-	#else
+      :
+      : "r" (in), "r" (&mod), "r" (&div)
+      : "r0", "r26", "r27", "r31", "r31"
+      );
+   }   
+   
+   
+   #else
     uint32_t ___t;
-	uint32_t ___x;
-	#endif
+   uint32_t ___x;
+   #endif
    
     // This cannot be optimized in C++, so don't try it, you are wasting your time, sure ;-)
 
     void _bit32Div10(uint32_t* div)
     {
         #if defined(__AVR__) && defined(XTM_AVR_SHIFTWISE_DIVIDE_ASM)
- 		  _avrdivmod10( *div, *div, ___x );
-		#else
+         _avrdivmod10( *div, *div, ___x );
+      #else
          ___x= (*div|1) - (*div>>2); // div = in/10 <~~> div = (0.75*in) >> 3
-	     ___q= (___x>>4) + ___x;
-	     ___x= ___q;
-	     ___q= (___q>>8) + ___x;
-	     ___q= (___q>>8) + ___x;
-	     ___q= (___q>>8) + ___x;
-	     ___q= (___q>>8) + ___x;
+        ___q= (___x>>4) + ___x;
+        ___x= ___q;
+        ___q= (___q>>8) + ___x;
+        ___q= (___q>>8) + ___x;
+        ___q= (___q>>8) + ___x;
+        ___q= (___q>>8) + ___x;
 
-	     *div = (___q >> 3);
+        *div = (___q >> 3);
         #endif
    }
 
     uint8_t _bit32Mod10(uint32_t* mod)
     {
-	    #if defined(__AVR__) && defined(XTM_AVR_SHIFTWISE_DIVIDE_ASM)
- 		  _avrdivmod10(*mod, ___q, ___x );
-		  return ___x;
-		#else
-		  _bit32Div10(&(___t= *mod));
-		  return (uint8_t)(*mod - (((___t << 2) + ___t) << 1));
-		#endif
-	}
+       #if defined(__AVR__) && defined(XTM_AVR_SHIFTWISE_DIVIDE_ASM)
+         _avrdivmod10(*mod, ___q, ___x );
+        return ___x;
+      #else
+        _bit32Div10(&(___t= *mod));
+        return (uint8_t)(*mod - (((___t << 2) + ___t) << 1));
+      #endif
+   }
  
 }
 #endif
@@ -296,47 +296,47 @@ xtm1638::xtm1638( uint8_t iDataIoPin, uint8_t iClockPin, uint8_t iStrobePin )
     #pragma message("WARNING: Calling constructor with parameters make no sense when compiled in ASM mode!")
     reset();
   #else
-	setup( iDataIoPin, iClockPin, iStrobePin );
-  #endif	
+   setup( iDataIoPin, iClockPin, iStrobePin );
+  #endif   
 }
 
 xtm1638::xtm1638()
 {
-	#ifdef XTM_ARDUINO_COMPATIBLE
+   #ifdef XTM_ARDUINO_COMPATIBLE
     
       // #pragma message("NOTICE: Compiled with defaults pins specified in xtm1638.config.h")
-	  setup( XTM_ARD_AUTO_PIN_DATAIO,
+     setup( XTM_ARD_AUTO_PIN_DATAIO,
              XTM_ARD_AUTO_PIN_CLOCK,
              XTM_ARD_AUTO_PIN_STROBE
-		   ); 
-	#else 
-		#ifndef XTM_AVR_ASM_MODE 
-			// #pragma message("NOTICE: Compiled with default register pins specified in xtm1638.config.h")
-			setup( XTM_REG_DEF_PIN_DATAIO,
-				   XTM_REG_DEF_PIN_CLOCK,
-				   XTM_REG_DEF_PIN_STROBE
-				 ); 
-		
-		#else
-		 #ifdef XTM_AVR_ASM_MODE 
-			#pragma message("NOTICE: Compiled with default ASM pins specified in xtm1638.config.h")
-		 #endif
-		 reset();
-		#endif
-	
-	#endif
+         ); 
+   #else 
+      #ifndef XTM_AVR_ASM_MODE 
+         // #pragma message("NOTICE: Compiled with default register pins specified in xtm1638.config.h")
+         setup( XTM_REG_DEF_PIN_DATAIO,
+               XTM_REG_DEF_PIN_CLOCK,
+               XTM_REG_DEF_PIN_STROBE
+             ); 
+      
+      #else
+       #ifdef XTM_AVR_ASM_MODE 
+         #pragma message("NOTICE: Compiled with default ASM pins specified in xtm1638.config.h")
+       #endif
+       reset();
+      #endif
+   
+   #endif
 }
 
 
 void xtm1638::setup( uint8_t iDataIoPin, uint8_t iClockPin, uint8_t iStrobePin )
 {
     #ifndef XTM_AVR_ASM_MODE 
-		_pinDataIO = iDataIoPin;
-		_pinClock  = iClockPin;
-		_pinStrobe = iStrobePin;
-	#endif
-	
-	reset();
+      _pinDataIO = iDataIoPin;
+      _pinClock  = iClockPin;
+      _pinStrobe = iStrobePin;
+   #endif
+   
+   reset();
 }
 
 
@@ -356,96 +356,96 @@ void xtm1638::reset()
 
 void xtm1638::send(uint8_t b)
 {
-        for (uint8_t i = 8; i; --i, b >>= 1)
-        {
-            XTM_CLK_LOW();
-            if (b & 1)
-              { XTM_DAT_HIGH(); }
-            else { XTM_DAT_LOW(); }
-            XTM_CLK_HIGH();
-        }
+    for (uint8_t i = 8; i; --i, b >>= 1)
+    {
+        XTM_CLK_LOW();
+        if (b & 1)
+         { XTM_DAT_HIGH(); }
+        else { XTM_DAT_LOW(); }
+        XTM_CLK_HIGH();
+    }
 }
 
 void xtm1638::sendCommand(uint8_t cmd)
 {
-        XTM_STB_LOW();
-        send(cmd);
-        XTM_STB_HIGH();
+    XTM_STB_LOW();
+    send(cmd);
+    XTM_STB_HIGH();
 }
 
 void xtm1638::sendData(uint8_t addr, uint8_t data)
 {
-		sendCommand(XTM_DATA_CMD | XTM_FIXED_ADDR);
-        XTM_STB_LOW();
-        send(XTM_ADDR_CMD | addr);
-        send(data);
-        XTM_STB_HIGH();
+    sendCommand(XTM_DATA_CMD | XTM_FIXED_ADDR);
+    XTM_STB_LOW();
+    send(XTM_ADDR_CMD | addr);
+    send(data);
+    XTM_STB_HIGH();
 }
 
 uint8_t xtm1638::receive()
 {
-        uint8_t rc = 0;
+    uint8_t rc = 0;
 
-        // Change DAT pin to INPUT and enable pull-up
-        XTM_START_RECEIVE();
+    // Change DAT pin to INPUT and enable pull-up
+    XTM_START_RECEIVE();
 
-        for (uint8_t i = 8, b = 1; i; --i, b <<= 1)
-        {
-            XTM_CLK_LOW();
+    for (uint8_t i = 8, b = 1; i; --i, b <<= 1)
+    {
+        XTM_CLK_LOW();
 
-            // Not required when in compatible mode
-            #ifndef XTM_ARDUINO_COMPATIBLE
-              // Must wait tWAIT for CLK transition
-              _delay_us(1);
-            #endif
+        // Not required when in compatible mode
+        #ifndef XTM_ARDUINO_COMPATIBLE
+         // Must wait tWAIT for CLK transition
+         _delay_us(1);
+        #endif
             
-            if( XTM_COMPARE_RECEIVED() )
-             { rc |= b; }
+        if( XTM_COMPARE_RECEIVED() )
+         { rc |= b; }
 
-            XTM_CLK_HIGH();
-        }
+        XTM_CLK_HIGH();
+    }
 
         // Disable pull-up and reset pin
-        XTM_STOP_RECEIVE();
+    XTM_STOP_RECEIVE();
 
-        return rc;
+    return rc;
 }
 
 void xtm1638::clear()
 {
-	int8_t i = XTM_REG_MAX+1;
-	while( i >= 0 )
-	{
+   int8_t i = XTM_REG_MAX+1;
+   while( i >= 0 )
+   {
       if( i > 0 )
-	   { sendData(i, 0x00); }
-	  #ifdef XTM_APPLY_CACHED_SEGMENTS
+      { sendData(i, 0x00); }
+     #ifdef XTM_APPLY_CACHED_SEGMENTS
       if( i < 8 )
-	   { _segbuff[i] = _segbuff[i+1] = 0x00; }
-	  #endif
+      { _segbuff[i] = _segbuff[i+1] = 0x00; }
+     #endif
       i-=2;
-	}	
+   }   
 }
 
 void xtm1638::setDisplay( bool bEnabled, uint8_t iBrightness )
 {
-  XTM_STB_HIGH();
-  XTM_CLK_HIGH();
+    XTM_STB_HIGH();
+    XTM_CLK_HIGH();
+ 
+    sendCommand( XTM_DATA_CMD );
+    sendCommand( XTM_DISP_CTRL | ( bEnabled ? 8 : 0) | ((iBrightness >= 0 && iBrightness < 8)?iBrightness:7) );
 
-  sendCommand( XTM_DATA_CMD );
-  sendCommand( XTM_DISP_CTRL | ( bEnabled ? 8 : 0) | ((iBrightness >= 0 && iBrightness < 8)?iBrightness:7) );
-
-  XTM_STB_LOW();
+    XTM_STB_LOW();
 }
 
 void xtm1638::setOrientation( bool bUpsideDown )
 {
-  _orient = bUpsideDown?XTM_ORIENT_UPSIDEDOWN:XTM_ORIENT_NORMAL;
+   _orient = bUpsideDown?XTM_ORIENT_UPSIDEDOWN:XTM_ORIENT_NORMAL;
 }
 
 
 uint8_t xtm1638::rotateByte( uint8_t value )
 {
-  return ( value & 0xC0 | (value & 0x07) << 3 | (value & 0x38) >> 3 );
+    return ( value & 0xC0 | (value & 0x07) << 3 | (value & 0x38) >> 3 );
 }
 
 void xtm1638::setByte(uint8_t pos, uint8_t value)
@@ -457,23 +457,23 @@ void xtm1638::setByte(uint8_t pos, uint8_t value)
         { value = rotateByte( value ); }
     }
 
-	
-	if( pos < 8 )
-	#ifdef XTM_APPLY_CACHED_SEGMENTS
-	 if( _segbuff[pos] != value )
-	 {
-      _segbuff[pos] = value | (_dotMask & (1 << pos) ? XTM_DOT : 0);
-	  sendData(pos << 1, _segbuff[pos] );
-	 }
-	#else 
-	 sendData(pos << 1, value | (_dotMask & (1 << pos) ? XTM_DOT : 0) );
-	#endif
+   
+   if( pos < 8 )
+   #ifdef XTM_APPLY_CACHED_SEGMENTS
+    if( _segbuff[pos] != value )
+    {
+       _segbuff[pos] = value | (_dotMask & (1 << pos) ? XTM_DOT : 0);
+       sendData(pos << 1, _segbuff[pos] );
+    }
+   #else 
+     sendData(pos << 1, value | (_dotMask & (1 << pos) ? XTM_DOT : 0) );
+   #endif
 }
 
 void xtm1638::setBytes(const char* value, uint8_t offset)
 {
     while (*value && offset < 8 )
-        setByte(offset++, *value++);
+     { setByte(offset++, *value++); }
 
     while( offset < 8 )
      { setByte(offset++, 0x00 ); }
@@ -502,52 +502,52 @@ void xtm1638::setDigit(uint8_t pos, uint8_t value)
 void xtm1638::setNumber(uint32_t number, uint8_t offset, uint8_t align)
 {
     if( number == 0 )
-	{
-		setDigit( offset, 0 ); 
-		return;
-	}
-	
-	if (align == XTM_LEFT)
+   {
+      setDigit( offset, 0 ); 
+      return;
+   }
+   
+   if (align == XTM_LEFT)
         offset += getOffsetDigits(number);
 
     while (number && offset != (uint8_t)0xFF)
     {
 
         #ifdef XTM_32_MODMULDIV_NUMBER_BY_10
-		 setDigit(offset--, XTM_32_MODMULDIV_NUMBER_BY_10 );
-		#else
-		 setDigit(offset--, XTM_32_MODDIV_NUMBER_BY_10 );
+       setDigit(offset--, XTM_32_MODMULDIV_NUMBER_BY_10 );
+      #else
+       setDigit(offset--, XTM_32_MODDIV_NUMBER_BY_10 );
 
          XTM_32_MULDIV_NUMBER_BY_10;
-		#endif
+      #endif
     }
 }
 
 void xtm1638::setSignedNumber(int32_t number, bool bShowPlusSign, uint8_t offset, uint8_t align)
 {
-	uint8_t iSignChar = XTM_PLUS;
-	
-	if( number < 0 )
-	{
-		iSignChar     = XTM_MINUS;
-		bShowPlusSign = true;
-		number*=-1;
-	}
-	
-	if( bShowPlusSign && number > 0 )
-	{
-		if( align == XTM_LEFT )
-		 { ++offset; }	
-	}
-	 
-	setNumber( number, offset, align );
-	
-	if( bShowPlusSign && number > 0 )
-	{
-		if( align == XTM_LEFT )
-		 { setByte( offset-1, iSignChar ); }
-		else { 	setByte( offset-getOffsetDigits(number)-1, iSignChar ); }
-	}
+    uint8_t iSignChar = XTM_PLUS;
+   
+    if( number < 0 )
+    {
+      iSignChar     = XTM_MINUS;
+      bShowPlusSign = true;
+      number*=-1;
+    }
+   
+    if( bShowPlusSign && number > 0 )
+    {
+      if( align == XTM_LEFT )
+       { ++offset; }   
+    }
+    
+   setNumber( number, offset, align );
+   
+    if( bShowPlusSign && number > 0 )
+    {
+      if( align == XTM_LEFT )
+       { setByte( offset-1, iSignChar ); }
+      else {    setByte( offset-getOffsetDigits(number)-1, iSignChar ); }
+    }
 }
 
 
@@ -556,12 +556,12 @@ void xtm1638::setNumberPad(uint32_t number, uint8_t offset, uint8_t width, uint8
     while (number && width-- && offset != (uint8_t)0xFF)
     {
         #ifdef XTM_32_MODMULDIV_NUMBER_BY_10
-		 setDigit(offset--, XTM_32_MODMULDIV_NUMBER_BY_10 );
-		#else
-		 setDigit(offset--, XTM_32_MODDIV_NUMBER_BY_10 );
+       setDigit(offset--, XTM_32_MODMULDIV_NUMBER_BY_10 );
+      #else
+       setDigit(offset--, XTM_32_MODDIV_NUMBER_BY_10 );
 
          XTM_32_MULDIV_NUMBER_BY_10;
-		#endif 
+      #endif 
     }
 
     while (width-- && offset != (uint8_t)0xFF)
@@ -570,7 +570,7 @@ void xtm1638::setNumberPad(uint32_t number, uint8_t offset, uint8_t width, uint8
 
 void xtm1638::setLzNumber(uint32_t number, uint8_t offset, uint8_t nDigits)
 {
-	setNumberPad(number, offset, nDigits, XTM_PAD_0 );
+   setNumberPad(number, offset, nDigits, XTM_PAD_0 );
 }
 
 void xtm1638::setNumberHex(uint32_t number, uint8_t offset, uint8_t width, uint8_t pad)
@@ -619,19 +619,19 @@ void xtm1638::setChars(const char* value, uint8_t offset, bool bClrScr )
         setChar(offset++, *value++);
 
     if( bClrScr )
-	while( offset < 8 )
+   while( offset < 8 )
      { setByte(offset++, 0x00 ); }
 }
 
 void xtm1638::setAlignedChars(const char* value, uint8_t align, bool bClrScr )
 {
-	if( align == XTM_LEFT )
-	 { setChars( value, 0 ); }
-	else { 
-			if( *value )
-			{ setChars( value, 8-getStrLen(value), bClrScr ); }	 
-		 }	 
-}	
+   if( align == XTM_LEFT )
+    { setChars( value, 0 ); }
+   else { 
+         if( *value )
+         { setChars( value, 8-getStrLen(value), bClrScr ); }    
+       }    
+}   
 
 void xtm1638::setDots(uint8_t mask)
 {
@@ -764,87 +764,87 @@ bool xtm1638::waitForNoButtonPressed( uint8_t iTimeOutSec )
 void xtm1638::gauge( uint8_t iPeakPerc, uint8_t iFirstPerc, uint8_t iSecondPerc,
                      uint8_t iStyle, uint8_t iSubStyle )
 {
- bool    bDivide         = ( iSubStyle != XTM_GAUGE_SUBSTYLE_NORMAL );
- bool    bDivideInCenter = bDivide?( iSubStyle != XTM_GAUGE_SUBSTYLE_INBOUND ):false;
- bool    bPipe           = (iStyle == XTM_GAUGE_STYLE_PIPE);
- uint8_t iSegs           = bDivide?(bPipe?8:4):(bPipe?16:8);
- uint8_t iDivSegs        = bDivide?(bPipe?4:iSegs):iSegs;
- bool    bTwoSegs        = bPipe || (iStyle == XTM_GAUGE_STYLE_STRIPE);
- bool    bBulletTop      = bTwoSegs?false:(iStyle == XTM_GAUGE_STYLE_BULLET_TOP);
- bool    bCenterLine     = bTwoSegs?false:(iStyle == XTM_GAUGE_STYLE_CENTER_LINE);
+    bool    bDivide         = ( iSubStyle != XTM_GAUGE_SUBSTYLE_NORMAL );
+    bool    bDivideInCenter = bDivide?( iSubStyle != XTM_GAUGE_SUBSTYLE_INBOUND ):false;
+    bool    bPipe           = (iStyle == XTM_GAUGE_STYLE_PIPE);
+    uint8_t iSegs           = bDivide?(bPipe?8:4):(bPipe?16:8);
+    uint8_t iDivSegs        = bDivide?(bPipe?4:iSegs):iSegs;
+    bool    bTwoSegs        = bPipe || (iStyle == XTM_GAUGE_STYLE_STRIPE);
+    bool    bBulletTop      = bTwoSegs?false:(iStyle == XTM_GAUGE_STYLE_BULLET_TOP);
+    bool    bCenterLine     = bTwoSegs?false:(iStyle == XTM_GAUGE_STYLE_CENTER_LINE);
 
- if( iSecondPerc == XTM_GAUGE_SINGLE )
-  { iSecondPerc = iFirstPerc; }
+    if( iSecondPerc == XTM_GAUGE_SINGLE )
+     { iSecondPerc = iFirstPerc; }
 
- if( iFirstPerc > 100 )
-  { iFirstPerc = 100; }
- if( iSecondPerc > 100 )
-  { iSecondPerc = 100; }
- if( iPeakPerc > 100 )
-  { iPeakPerc = 100; }
+    if( iFirstPerc > 100 )
+     { iFirstPerc = 100; }
+    if( iSecondPerc > 100 )
+     { iSecondPerc = 100; }
+    if( iPeakPerc > 100 )
+     { iPeakPerc = 100; }
 
- #ifdef XTM_ARITHMETIC_MULTIPLY
-  iFirstPerc  = (iFirstPerc>0)?((uint8_t)round((iSegs * 0.01) * iFirstPerc )):0;
-  iSecondPerc = (iSecondPerc>0)?((uint8_t)round((iSegs * 0.01) * iSecondPerc )):0;
-  iPeakPerc   = (iPeakPerc>0)?((uint8_t)round((iSegs * 0.01) * iPeakPerc )):0;
- #else
-  iFirstPerc  = (iFirstPerc>0)?((uint8_t)round((iSegs / 100.0) * iFirstPerc )):0;
-  iSecondPerc = (iSecondPerc>0)?((uint8_t)round((iSegs / 100.0) * iSecondPerc )):0;
-  iPeakPerc   = (iPeakPerc>0)?((uint8_t)round((iSegs / 100.0) * iPeakPerc )):0;
- #endif
+    #ifdef XTM_ARITHMETIC_MULTIPLY
+      iFirstPerc  = (iFirstPerc>0)?((uint8_t)round((iSegs * 0.01) * iFirstPerc )):0;
+      iSecondPerc = (iSecondPerc>0)?((uint8_t)round((iSegs * 0.01) * iSecondPerc )):0;
+      iPeakPerc   = (iPeakPerc>0)?((uint8_t)round((iSegs * 0.01) * iPeakPerc )):0;
+    #else
+      iFirstPerc  = (iFirstPerc>0)?((uint8_t)round((iSegs / 100.0) * iFirstPerc )):0;
+      iSecondPerc = (iSecondPerc>0)?((uint8_t)round((iSegs / 100.0) * iSecondPerc )):0;
+      iPeakPerc   = (iPeakPerc>0)?((uint8_t)round((iSegs / 100.0) * iPeakPerc )):0;
+    #endif
  
- uint8_t i     = 0;
- uint8_t iPos  = 0;
- uint8_t c;
- uint8_t iLeft;
- uint8_t iRight;
- bool    bLeft;
- bool    bRight;
+    uint8_t i     = 0;
+    uint8_t iPos  = 0;
+    uint8_t c;
+    uint8_t iLeft;
+    uint8_t iRight;
+    bool    bLeft;
+    bool    bRight;
  
- //clearLEDs();
+    //clearLEDs();
  
- while( ++i <= iSegs )
- {
-	bLeft  = ( iFirstPerc  && iFirstPerc >= i  );
-	bRight = ( iSecondPerc && iSecondPerc >= i );
-    
-	if( bDivide )
+    while( ++i <= iSegs )
     {
-     if( bPipe )
-	 {
-		// 27-jan-2019: Quick fix of position
-		iLeft  = (bDivideInCenter?(3-iPos):iPos);
-		iRight = (bDivideInCenter?(4+iPos):7-iPos);
-	 }	
-	 else {
-			iLeft  = (bDivideInCenter?(iDivSegs-i):(i-1));
-			iRight = (bDivideInCenter?(iDivSegs+i-1):((iDivSegs*2)-i));
-		  }
-	}
-    else { iLeft = i-1; }
+       bLeft  = ( iFirstPerc  && iFirstPerc >= i  );
+       bRight = ( iSecondPerc && iSecondPerc >= i );
     
-    if( iStyle == XTM_GAUGE_STYLE_LED )
-    {
-      if( bLeft || bRight || (i == iPeakPerc) )
+       if( bDivide )
        {
-          if( bDivide )
+          if( bPipe )
+          {
+             // 27-jan-2019: Quick fix of position
+             iLeft  = (bDivideInCenter?(3-iPos):iPos);
+             iRight = (bDivideInCenter?(4+iPos):7-iPos);
+        }   
+        else {
+               iLeft  = (bDivideInCenter?(iDivSegs-i):(i-1));
+               iRight = (bDivideInCenter?(iDivSegs+i-1):((iDivSegs*2)-i));
+             }
+        }
+        else { iLeft = i-1; }
+    
+        if( iStyle == XTM_GAUGE_STYLE_LED )
+        {
+           if( bLeft || bRight || (i == iPeakPerc) )
            {
-             if( bLeft )
-			  { setLED( iLeft ); }
-			 else { clearLED( iLeft ); } 
-             if( bRight )
-			  { setLED( iRight ); }
-			 else { clearLED( iRight ); }  
-           }
-          else { setLED( iLeft ); }
-       }
-      else {
-             clearLED( iLeft );
-			 if( bDivide )
-              { clearLED( iRight ); }
-           }
+               if( bDivide )
+               {
+                  if( bLeft )
+                   { setLED( iLeft ); }
+                  else { clearLED( iLeft ); } 
+                  if( bRight )
+                   { setLED( iRight ); }
+                  else { clearLED( iRight ); }  
+                }
+               else { setLED( iLeft ); }
+        }
+        else {
+                clearLED( iLeft );
+                if( bDivide )
+                  { clearLED( iRight ); }
+             }
 
-      continue;
+        continue;
     }
 
     c = (uint8_t)0x00;
@@ -853,106 +853,106 @@ void xtm1638::gauge( uint8_t iPeakPerc, uint8_t iFirstPerc, uint8_t iSecondPerc,
     {
        // inbound: bDivide && !bDivideInCenter
        // center : bDivide && bDivideInCenter
-	   
-	   
-	   if( !bDivide ) // Two channels in one character?
-	   {
-			if( bLeft )
-			 { c+=bPipe?(uint8_t)0x20:(uint8_t)0x01; } // Add | left-top or -- at top
-			
-			if( bRight )
-			 { c+=bPipe?(uint8_t)0x10:(uint8_t)0x08; } // Add | left-bottom or -- at bottom
-	   }
-	   else {
-				if( (bLeft && bRight) || bLeft || bRight )
-				 { 
-				   c+=bPipe?(uint8_t)0x30:(uint8_t)0x09;  // Add | left-top or -- at top
-				                                          // Add | left-bottom or -- at bottom
-				 }	
-			}
-			
-	   // Pipe can hold two values (doubled resolution) in one character, get and set next one
-	   if( bPipe && (bLeft || bRight) ) 
-       {
-        // Set peak value
-	    if( iPeakPerc == i )
-         { c+=0x80; }
-		
- 		// Get next 	
-        ++i;
-
-		if( !bDivide ) // Two channels in one character?
-		{
-			if( iFirstPerc && iFirstPerc >= i )
-			 { c+=(uint8_t)0x02; } // Add | right-top 
-			if( iSecondPerc && iSecondPerc >= i) 
-             { c+=(uint8_t)0x04; } // Add | right-bottom 
-        }
-	    else {
-				if( iFirstPerc && iFirstPerc >= i || iSecondPerc && iSecondPerc >= i )
-				{
-				  c+=(uint8_t)0x06; // Add | right-top && add | right-bottom 
-				}
-			 }
-	   }
-
-        // Set peak value
-	   if( iPeakPerc == i && c < 0x40 )
-        { c+=bPipe?(uint8_t)0x80:0x40; }
-
-       if( bDivide )
+      
+      
+        if( !bDivide ) // Two channels in one character?
         {
-			setByte( iLeft , bLeft ?((bPipe &&  bDivideInCenter)?rotateByte(c):c):0x00 );
-			setByte( iRight, bRight?((bPipe && !bDivideInCenter)?rotateByte(c):c):0x00 );
-		}
-       else { setByte( iPos, c ); }
+            if( bLeft )
+             { c+=bPipe?(uint8_t)0x20:(uint8_t)0x01; } // Add | left-top or -- at top
+         
+            if( bRight )
+             { c+=bPipe?(uint8_t)0x10:(uint8_t)0x08; } // Add | left-bottom or -- at bottom
+        }
+        else {
+                 if( (bLeft && bRight) || bLeft || bRight )
+                 { 
+                     c+=bPipe?(uint8_t)0x30:(uint8_t)0x09;  // Add | left-top or -- at top
+                                                           // Add | left-bottom or -- at bottom
+                 }   
+             }
+         
+        // Pipe can hold two values (doubled resolution) in one character, get and set next one
+        if( bPipe && (bLeft || bRight) ) 
+        {
+            // Set peak value
+            if( iPeakPerc == i )
+             { c+=0x80; }
+      
+            // Get next    
+            ++i;
+
+            if( !bDivide ) // Two channels in one character?
+            {
+               if( iFirstPerc && iFirstPerc >= i )
+                { c+=(uint8_t)0x02; } // Add | right-top 
+               if( iSecondPerc && iSecondPerc >= i) 
+                { c+=(uint8_t)0x04; } // Add | right-bottom 
+            }
+            else {
+                    if( iFirstPerc && iFirstPerc >= i || iSecondPerc && iSecondPerc >= i )
+                    {
+                       c+=(uint8_t)0x06; // Add | right-top && add | right-bottom 
+                    }
+                 }
+        }
+
+        // Set peak value
+        if( iPeakPerc == i && c < 0x40 )
+         { c+=bPipe?(uint8_t)0x80:0x40; }
+
+        if( bDivide )
+        {
+            setByte( iLeft , bLeft ?((bPipe &&  bDivideInCenter)?rotateByte(c):c):0x00 );
+            setByte( iRight, bRight?((bPipe && !bDivideInCenter)?rotateByte(c):c):0x00 );
+        }
+        else { setByte( iPos, c ); }
     }
     else {
-           uint8_t iChar     = bCenterLine?0x40:(bBulletTop?(uint8_t)0x63:(uint8_t)0x5C);
-		   uint8_t iPeakChar = bCenterLine?0x80:(bBulletTop?(uint8_t)0x08:(uint8_t)0x01);
-		   
-		   if( bDivide )
-           {
+            uint8_t iChar     = bCenterLine?0x40:(bBulletTop?(uint8_t)0x63:(uint8_t)0x5C);
+            uint8_t iPeakChar = bCenterLine?0x80:(bBulletTop?(uint8_t)0x08:(uint8_t)0x01);
+         
+            if( bDivide )
+            {
               // Center line and first one?
-			 if( bCenterLine && iPos == 0 )
-			 {
-			    c+=(bDivideInCenter)?(uint8_t)0x06:(uint8_t)0x30; // Add |
-			 }
-			 
-			 if( bLeft )
-              { c+=iChar+(( iPeakPerc == i )?iPeakChar:0); }
+                if( bCenterLine && iPos == 0 )
+                {
+                    c+=(bDivideInCenter)?(uint8_t)0x06:(uint8_t)0x30; // Add |
+                }
+          
+                if( bLeft )
+                 { c+=iChar+(( iPeakPerc == i )?iPeakChar:0); }
 
-             setByte( iLeft , c );
-             c=0x00;
+                setByte( iLeft , c );
+                c=0x00;
               
-			  // Center line and first one?
-			 if( bCenterLine && iPos == 0 )
-			 {
-			    c+=(bDivideInCenter)?(uint8_t)0x30:(uint8_t)0x06; // Add |
-			 }
+                // Center line and first one?
+                if( bCenterLine && iPos == 0 )
+                {
+                  c+=(bDivideInCenter)?(uint8_t)0x30:(uint8_t)0x06; // Add |
+                }
 
-             if( bRight )
-              { c+=iChar+(( iPeakPerc == i )?iPeakChar:0); }
+                if( bRight )
+                 { c+=iChar+(( iPeakPerc == i )?iPeakChar:0); }
 
 
-             setByte( iRight , c );
-           }
+                setByte( iRight , c );
+            }
            else {
-				   // Center line and first one?
-				  if( bCenterLine && iPos == 0 )
-				  {
-					c+=(uint8_t)0x30; // Add |
-			      }
+                    // Center line and first one?
+                    if( bCenterLine && iPos == 0 )
+                    {
+                      c+=(uint8_t)0x30; // Add |
+                    }
                  
-				  if( bLeft || bRight )
-				   { c+=iChar+(( iPeakPerc == i )?iPeakChar:0); }
+                    if( bLeft || bRight )
+                     { c+=iChar+(( iPeakPerc == i )?iPeakChar:0); }
 
-                  setByte( iPos, c );
+                    setByte( iPos, c );
                 }
          }
 
-    ++iPos;
- }
+        ++iPos;
+    }
 
 }
 

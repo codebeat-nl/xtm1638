@@ -31,18 +31,18 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   VERSION history:
-  - Date	: 20-may-2017 (v2.00)
+  - Date   : 20-may-2017 (v2.00)
     updated : 31-dec-2018 (v2.01)
     updated : 30-jan-2019 (v2.02)
-	
-	Original by IronCreek Software, available here:
-      Source: https://github.com/int2str/TM1638
-      Topic : https://forum.arduino.cc/index.php?topic=190472.0
+   
+    Original by IronCreek Software, available here:
+    Source: https://github.com/int2str/TM1638
+    Topic : https://forum.arduino.cc/index.php?topic=190472.0
  
   v2.02
    - Added caching method for segments, SUPERB performance! Compatible mode
      has been also improved because of this. See also XTM_APPLY_CACHED_SEGMENTS in 
-	 changed xtm1638.config.h file;
+    changed xtm1638.config.h file;
    - Added more optimizations in assembler for AVR, see also 
      XTM_AVR_SHIFTWISE_DIVIDE_ASM in changed xtm1638.config.h file;
    - Added FastGPIO support for AVR, requires third-party library by Pololu 
@@ -119,13 +119,12 @@
   - http://blog.codebeat.nl            ; Blog website (projects and more)
   - http://youtube.codebeat.nl         ; YouTube channel (shortcut)
   - http://patreon.codebeat.nl         ; Patreon support channel (shortcut)   
-  - http://github.codebeat.nl     	   ; Github (projects)
+  - http://github.codebeat.nl           ; Github (projects)
   
   Thank you for supporting if you do!
 
   Happy coding, greetz,
   Erwin Haantjes (codebeat) 
-
 */
 
 #ifndef XTM1638AE_H
@@ -186,7 +185,7 @@
     #ifdef XTM_AVR_SHIFTWISE_DIVIDE_ASM
      #undef XTM_AVR_SHIFTWISE_DIVIDE_ASM
     #endif
-  #endif	
+  #endif   
 #endif  
 
 
@@ -495,16 +494,15 @@ class xtm1638
     //   hundred bytes.
     xtm1638( uint8_t iDataIoPin, uint8_t iClockPin, uint8_t iStrobePin );
 
-	// Constructor: Construct object without parameters, uses the defaults specified 
-	// in xtm1638.config.h file for specific mode. To view the defaults, take a 
-	// look at this file.
-	xtm1638();
-	
-  public:
-	// Resets and initialize the device
-	void reset();
+    // Constructor: Construct object without parameters, uses the defaults specified 
+    // in xtm1638.config.h file for specific mode. To view the defaults, take a 
+    // look at this file.
+    xtm1638();
+   
+    // Resets and initialize the device
+    void reset();
   
-	// Clears the 7-segment displays (only)
+    // Clears the 7-segment displays (only)
     void clear();
 
     // Set the display (digits and leds) enabled or disabled or change the
@@ -513,12 +511,12 @@ class xtm1638
 
     // Set the orientation of your device, normally keys are below the display
     // however you can change this to use the device with keys on top of the display 
-	// (180 degrees turn). All text, leds and knobs will be interpreted upside down 
-	// so it fits the orientation and expectations of the user and programmer.
+    // (180 degrees turn). All text, leds and knobs will be interpreted upside down 
+    // so it fits the orientation and expectations of the user and programmer.
     void setOrientation( bool bUpsideDown );
 
     // Rotates a byte, in fact a character 180 degrees.
-	uint8_t rotateByte( uint8_t value );
+    uint8_t rotateByte( uint8_t value );
 
     // Set a single 7-segment display to the given byte value.
     // This allows direct control of the elements to do spinning animations etc.
@@ -538,18 +536,18 @@ class xtm1638
     // Display an unsigned number at a given offset and alignment.
     void setNumber(uint32_t number, uint8_t offset = 7, uint8_t align = XTM_RIGHT);
     
-	// Display a signed number (negative and positive) at a given offset and alignment.
+    // Display a signed number (negative and positive) at a given offset and alignment.
     void setSignedNumber(int32_t number, bool bShowPlusSign = false, uint8_t offset = 7, uint8_t align = XTM_RIGHT );
 
     // Display an unsigned number at a given offset and pad it with 0's or
     // spaces to a desired width. This function is helpful when the numbers can
     // fluctuate in length (ex. 100, 5, 1000) to avoid flickering and shifting segments.
     void setNumberPad(uint32_t number, uint8_t offset, uint8_t width, uint8_t pad = XTM_PAD_SPACE);
-	
-	// Display an unsigned number at a given offset and adds zero('s) before number
-    // when the length (width) is less than required specified nDigits. 	
-	// NOTICE: Offset must be higher or egual to nDigits.
-	void setLzNumber(uint32_t number, uint8_t offset, uint8_t nDigits = 2);
+   
+    // Display an unsigned number at a given offset and adds zero('s) before number
+    // when the length (width) is less than required specified nDigits.    
+    // NOTICE: Offset must be higher or egual to nDigits.
+    void setLzNumber(uint32_t number, uint8_t offset, uint8_t nDigits = 2);
 
     // Display an unsigned number in hex format at a given offset and pad it
     // with 0's or spaces to a desired width.
@@ -558,15 +556,15 @@ class xtm1638
     // Draw a character at a given position.
     // Not all characters are supported, check declaration for an overview.
     // If you want to draw custom characters (or animations), you better use 
-	// setByte() function.
-	void setChar(uint8_t pos, const char value );
+    // setByte() function.
+    void setChar(uint8_t pos, const char value );
 
     // Display a string starting at a given offset.
     void setChars(const char* value, uint8_t offset = 0, bool bClrScr = true );
 
     // Display a string starting at a given alignment
     void setAlignedChars(const char* value, uint8_t align = XTM_RIGHT, bool bClrScr = true );
-	
+   
     // Set which "dots" should be enabled.
     // Mask is mapped right to left (ex. 0x01 = right-most dot)
     void setDots(uint8_t mask);
@@ -597,9 +595,9 @@ class xtm1638
     bool isButtonPressed( uint8_t iPos, uint8_t iButtons = 0 );
 
     // Function to avoid/requirement include of strings.h, result is same as strlen() 
-	uint8_t getStrLen( const char* value );
-	
-	// Returns a value <> XTM_NOBUTTON when a button is pressed.
+    uint8_t getStrLen( const char* value );
+   
+    // Returns a value <> XTM_NOBUTTON when a button is pressed.
     uint8_t getButtonPressed();
 
     // Wait for buttonpress, if no iTimeOutSec is specified the timeout
@@ -616,7 +614,7 @@ class xtm1638
     // battery indicator, settings, measurement, etc.
     // Values are in percent, see also gauge options on top of this file.
     // Or refer to the demo's sketches provided with this library.
-	// Examples:
+    // Examples:
     //   gauge( 0, 50 );        <-- 50% gauge
     //   gauge( 0, 50, 20 );    <-- First = 50%, second = 20%
     //   gauge( 80, 50, 20 );   <-- Peak = 80%, First = 50%, second = 20%
@@ -631,20 +629,20 @@ class xtm1638
 protected:
     uint8_t _dotMask     = 0;
     bool    _orient      = XTM_ORIENT_NORMAL;
-	
-   #ifdef XTM_APPLY_CACHED_SEGMENTS
-	uint8_t _segbuff[8]; // consumes 8 bytes of dynamic memory
-   #endif
-	
-   #if defined(XTM_ARDUINO_COMPATIBLE) || !defined(XTM_AVR_ASM_MODE) 
-    // Variables set with use of constructor
-    uint8_t _pinStrobe;  // for example: PB0
-    uint8_t _pinClock;   // for example: PB1
-    uint8_t _pinDataIO;  // for example: PB2
-   #endif 
+   
+    #ifdef XTM_APPLY_CACHED_SEGMENTS
+     uint8_t _segbuff[8]; // consumes 8 bytes of dynamic memory
+    #endif
+   
+    #if defined(XTM_ARDUINO_COMPATIBLE) || !defined(XTM_AVR_ASM_MODE) 
+     // Variables set with use of constructor
+     uint8_t _pinStrobe;  // for example: PB0
+     uint8_t _pinClock;   // for example: PB1
+     uint8_t _pinDataIO;  // for example: PB2
+    #endif 
 
-	 // Internally used, applies parameters
-	void setup( uint8_t iDataIoPin, uint8_t iClockPin, uint8_t iStrobePin );
+     // Internally used, applies parameters
+    void setup( uint8_t iDataIoPin, uint8_t iClockPin, uint8_t iStrobePin );
 
     void send(uint8_t b);
     void sendCommand(uint8_t cmd);
