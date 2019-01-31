@@ -55,18 +55,20 @@ The TM1638 can be found in combination of 8 digit, 7-segment LED displays which 
 - Rename the folder to xtm1638
 - Restart IDE
 - Open example by using the example and search for xtml1638
-- Open tm1638Example01
+- Open xtm1638Example01
 - Try to compile it (no errors = installed)
 
 
 ## Included examples
-- tm1638Example01.ino - Hello world example
-- tm1638Example02.ino - Clock example with hours, minutes, seconds and user interface
-- tm1638Example03.ino - Characterset, gauge functionality (bars and indicators), orientation change
-- tm1638Example04.ino - Dedicated to benchmarks (see benchmarks below)
-- tm1638Example05.ino - Gauge, battery indicator, animation, orientation change
-
+- xtm1638Example01.ino - Hello world example
+- xtm1638Example02.ino - Clock example with hours, minutes, seconds and user interface
+- xtm1638Example03.ino - Characterset, gauge functionality (bars and indicators), orientation change
+- xtm1638Example04.ino - Dedicated to benchmarks (see benchmarks below)
+- xtm1638Example05.ino - Gauge, battery indicator, animation, orientation change
+.
 ## Gauge examples
+You can use the class it's gauge() function to display bars as indicators. Gauges can represent a single value or two values (balanced). There are 5 different types, each gauge type has 3 modes, normal, center or inbound.
+
 ![Gauge examples](https://raw.githubusercontent.com/codebeat-nl/xtm1638/master/xtm1638_gauge_modes-16.png)
 
 
